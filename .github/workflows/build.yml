@@ -1,0 +1,29 @@
+name: Build JSON
+
+on:
+  schedule:
+    - cron: "0 0 * * *"   # chạy mỗi ngày lúc 00:00 UTC
+  workflow_dispatch:      # cho phép chạy thủ công
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 22
+
+      - name: Generate JSON
+        working-directory: ./src/resource
+        run: node index.js
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
+          publish_branch: gh-pages
